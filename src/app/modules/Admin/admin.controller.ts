@@ -1,25 +1,31 @@
-
-import{ Request, Response } from 'express';
+import { Request, Response } from 'express';
+import { pick } from '../../../Shared/pick';
 import { adminService } from './admin.service';
+import { adminFilterableFields } from './admin.constant';
+
 
 const getAllFromDB = async (req: Request, res: Response) => {
-    console.log(req.query);
-   try {
-     const result = await adminService.getAllFromDB(req.query);
+    try {
+        // console.log(req.query)
+        const filters = pick(req.query, adminFilterableFields);
+        const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder'])
+        console.log(options)
+        const result = await adminService.getAllFromDB(filters, options)
         res.status(200).json({
             success: true,
-            message: "Admin fetched successfully",
+            message: "Admin data fetched!",
             data: result
-        });
-    } catch (error) {
+        })
+    }
+    catch (err) {
         res.status(500).json({
             success: false,
-            message: (error as Error)?.name || "Something went wrong",
-            error: error
-        });
+            message: (err as Error)?.name || "Something went wrong",
+            error: err
+        })
     }
-};
+}
 
-export const adminController = {
+export const AdminController = {
     getAllFromDB
-};
+}

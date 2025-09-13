@@ -1,9 +1,9 @@
 
 import express from 'express';
-import { adminController } from './admin.controller';
+import { AdminController } from './admin.controller';
 
 const router = express.Router();
 
-router.get('/', adminController.getAllFromDB);
+router.get('/', AdminController.getAllFromDB);
 
 export const adminRoutes = router;
