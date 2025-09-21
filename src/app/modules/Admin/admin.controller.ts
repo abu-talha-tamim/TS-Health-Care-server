@@ -1,10 +1,11 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import { pick } from "../../../Shared/pick";
-import { adminService } from "./admin.service";
+
 import { adminFilterableFields } from "./admin.constant";
 import httpStatus from "http-status";
 import sendResponse from "../../../Shared/sendResponse";
 import catchAsync from "../../../Shared/catchAsync";
+import { AdminService } from "./admin.service";
 
 const getAllFromDB: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
@@ -12,14 +13,14 @@ const getAllFromDB: RequestHandler = catchAsync(
     const filters = pick(req.query, adminFilterableFields);
     const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
     console.log(options);
-    const result = await adminService.getAllFromDB(filters, options);
+    const result = await AdminService.getAllFromDB(filters, options);
 
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
       message: "Admin data fetched!",
       meta: result.meta,
-      data: result.rdata,
+      data: result.data,
     });
   }
 );
@@ -32,7 +33,7 @@ const getByIdFromDB = catchAsync(async (req: Request, res: Response) => {
     });
   }
 
-  const result = await adminService.getByIdFromDB(id);
+  const result = await AdminService.getByIdFromDB(id);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -51,7 +52,7 @@ const updateIntoDB = catchAsync(async (req: Request, res: Response) => {
     });
   }
 
-  const result = await adminService.updateIntoDB(id, req.body);
+  const result = await AdminService.updateIntoDB(id, req.body);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -70,7 +71,7 @@ const deleteFromDB = catchAsync(async (req: Request, res: Response) => {
     });
   }
 
-  const result = await adminService.deleteFromDB(id);
+  const result = await AdminService.deleteFromDB(id);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -89,7 +90,7 @@ const softDeleteFromDB = catchAsync(async (req: Request, res: Response) => {
     });
   }
 
-  const result = await adminService.softDeleteFromDB(id);
+  const result = await AdminService.softDeleteFromDB(id);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
