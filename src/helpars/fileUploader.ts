@@ -1,5 +1,7 @@
 import multer from "multer";
 import path from "path";
+import fs from "fs";
+import { v2 as cloudinary } from "cloudinary";
 import { ICloudinaryResponse, IFile } from "../app/interfaces/file";
 
 cloudinary.config({

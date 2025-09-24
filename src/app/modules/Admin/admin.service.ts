@@ -1,4 +1,4 @@
-import { Admin, Prisma, PrismaClient, UserSTATUS } from "@prisma/client";
+import { Admin, Prisma, UserSTATUS } from "@prisma/client";
 import { adminSearchAbleFields } from "./admin.constant";
 import prisma from "../../../Shared/prisma";
 import { IAdminFilterRequest } from "./admin.interface";
@@ -111,21 +111,23 @@ const deleteFromDB = async (id: string): Promise<Admin | null> => {
     },
   });
 
-  const result = await prisma.$transaction(async (transactionClient) => {
-    const adminDeletedData = await transactionClient.admin.delete({
-      where: {
-        id,
-      },
-    });
+  const result = await prisma.$transaction(
+    async (transactionClient: Prisma.TransactionClient) => {
+      const adminDeletedData = await transactionClient.admin.delete({
+        where: {
+          id,
+        },
+      });
 
-    await transactionClient.user.delete({
-      where: {
-        email: adminDeletedData.email,
-      },
-    });
+      await transactionClient.user.delete({
+        where: {
+          email: adminDeletedData.email,
+        },
+      });
 
-    return adminDeletedData;
-  });
+      return adminDeletedData;
+    }
+  );
 
   return result;
 };
@@ -138,27 +140,29 @@ const softDeleteFromDB = async (id: string): Promise<Admin | null> => {
     },
   });
 
-  const result = await prisma.$transaction(async (transactionClient) => {
-    const adminDeletedData = await transactionClient.admin.update({
-      where: {
-        id,
-      },
-      data: {
-        isDeleted: true,
-      },
-    });
+  const result = await prisma.$transaction(
+    async (transactionClient: Prisma.TransactionClient) => {
+      const adminDeletedData = await transactionClient.admin.update({
+        where: {
+          id,
+        },
+        data: {
+          isDeleted: true,
+        },
+      });
 
-    await transactionClient.user.update({
-      where: {
-        email: adminDeletedData.email,
-      },
-      data: {
-        status: UserSTATUS.DELETED,
-      },
-    });
+      await transactionClient.user.update({
+        where: {
+          email: adminDeletedData.email,
+        },
+        data: {
+          status: UserSTATUS.DELETED,
+        },
+      });
 
-    return adminDeletedData;
-  });
+      return adminDeletedData;
+    }
+  );
 
   return result;
 };
